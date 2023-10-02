@@ -98,7 +98,9 @@ jobs:
             C:\gtk-build
 
       - name: Build GTK4
-        run: gvsbuild build gtk4
+        run: |
+          pip install gvsbuild
+          gvsbuild build gtk4
 
       - name: Save GTK4
         uses: actions/cache/save@v3
