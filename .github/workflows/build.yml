@@ -18,6 +18,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
 
+      - uses: actions/cache/restore@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -33,6 +43,16 @@ jobs:
           cargo build --release
           strip target/release/${{ env.CARGO_NAME }}
           mv target/release/${{ env.CARGO_NAME }} target/release/${{ env.CARGO_NAME }}-linux-x86_64
+
+      - uses: actions/cache/save@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Publish release
         uses: softprops/action-gh-release@v1
