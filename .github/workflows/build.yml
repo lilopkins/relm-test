@@ -136,3 +136,57 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: target/release/${{ env.CARGO_NAME }}-windows-x86_64.exe
+
+  build-mac:
+    name: Build and Publish (Mac)
+    runs-on: macos-latest
+    permissions: write-all
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Restore Cargo cache
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: x86_64-apple-darwin
+          default: true
+          override: true
+
+      - name: Install dependencies
+        run: brew install gtk4
+
+      - name: Build
+        run: |
+          cargo build --release
+          strip target/release/${{ env.CARGO_NAME }}
+          mv target/release/${{ env.CARGO_NAME }} target/release/${{ env.CARGO_NAME }}-macos-x86_64
+
+      - name: Save Cargo cache
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: target/release/${{ env.CARGO_NAME }}-macos-x86_64
