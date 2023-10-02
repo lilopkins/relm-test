@@ -18,7 +18,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
 
-      - uses: actions/cache/restore@v3
+      - name: Restore Cargo cache
+        uses: actions/cache/restore@v3
         with:
           path: |
             ~/.cargo/bin/
@@ -44,7 +45,8 @@ jobs:
           strip target/release/${{ env.CARGO_NAME }}
           mv target/release/${{ env.CARGO_NAME }} target/release/${{ env.CARGO_NAME }}-linux-x86_64
 
-      - uses: actions/cache/save@v3
+      - name: Save Cargo cache
+        uses: actions/cache/save@v3
         with:
           path: |
             ~/.cargo/bin/
@@ -69,7 +71,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
 
-      - uses: actions/cache/restore@v3
+      - name: Restore Cargo cache
+        uses: actions/cache/restore@v3
         with:
           path: |
             ~/.cargo/bin/
@@ -115,7 +118,8 @@ jobs:
           cargo build --release
           move target/release/${{ env.CARGO_NAME }} target/release/${{ env.CARGO_NAME }}-windows-x86_64.exe
 
-      - uses: actions/cache/save@v3
+      - name: Save Cargo cache
+        uses: actions/cache/save@v3
         with:
           path: |
             ~/.cargo/bin/
