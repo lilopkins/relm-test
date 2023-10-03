@@ -129,7 +129,7 @@ jobs:
           $env:PKG_CONFIG_PATH="C:\gtk-build\gtk\x64\release\lib\pkgconfig;" + $env:PKG_CONFIG_PATH
 
           cargo build --release
-          mv target/release/${{ env.CARGO_NAME }} target/release/${{ env.CARGO_NAME }}-windows-x86_64.exe
+          mv target/release/${{ env.CARGO_NAME }}.exe target/release/${{ env.CARGO_NAME }}-windows-x86_64.exe
 
       - name: Save Cargo cache
         uses: actions/cache/save@v3
