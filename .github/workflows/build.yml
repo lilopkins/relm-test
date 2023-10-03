@@ -121,6 +121,9 @@ jobs:
           path: |
             C:\gtk-build
 
+      - name: Tree GTK release
+        run: tree C:\gtk-build\gtk\x64\
+
       - name: Build
         run: |
           $env:PATH="C:\gtk-build\gtk\x64\release\bin;" + $env:PATH
@@ -129,7 +132,12 @@ jobs:
           $env:PKG_CONFIG_PATH="C:\gtk-build\gtk\x64\release\lib\pkgconfig;" + $env:PKG_CONFIG_PATH
 
           cargo build --release
-          mv target/release/${{ env.CARGO_NAME }}.exe target/release/${{ env.CARGO_NAME }}-windows-x86_64.exe
+          mkdir -p bundle
+          mv target/release/${{ env.CARGO_NAME }}.exe bundle/${{ env.CARGO_NAME }}-windows-x86_64.exe
+          mv C:\gtk-build\gtk\x64\release\lib\gio-2.0-0.dll bundle/gio-2.0-0.dll
+          mv C:\gtk-build\gtk\x64\release\lib\glib-2.0-0.dll bundle/glib-2.0-0.dll
+          mv C:\gtk-build\gtk\x64\release\lib\gobject-2.0-0.dll bundle/gobject-2.0-0.dll
+          mv C:\gtk-build\gtk\x64\release\lib\gtk-4-1.dll bundle/gtk-4-1.dll
 
       - name: Save Cargo cache
         uses: actions/cache/save@v3
@@ -142,11 +150,18 @@ jobs:
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
+      - name: Archive release
+        uses: thedoctor0/zip-release@0.7.1
+        with:
+          type: zip
+          path: bundle
+          filename: ${{ env.CARGO_NAME }}-windows-x86_64.zip
+
       - name: Publish release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: target/release/${{ env.CARGO_NAME }}-windows-x86_64.exe
+          files: ${{ env.CARGO_NAME }}-windows-x86_64.zip
 
   build-mac:
     name: Build and Publish (Mac)
