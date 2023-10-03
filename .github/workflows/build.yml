@@ -103,6 +103,10 @@ jobs:
           python -m pipx ensurepath
           pipx install gvsbuild
           gvsbuild build gtk4 --ninja-opts -j2 --verbose --capture-out --log-single --configuration debug libpng
+          RET_CODE=$?
+          tree C:/gtk-build/build/x64/debug
+          exit $RET_CODE
+
 
       - name: Save GTK4
         uses: actions/cache/save@v3
