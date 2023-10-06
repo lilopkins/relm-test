@@ -25,8 +25,8 @@ jobs:
         run: |
           export CARGO_PKG_VERSION=$(awk -F '"' '/version =/ {print $2}' Cargo.toml)
           export CARGO_PKG_PRERELEASE=$(awk -F '"' '/version =/ { if ($2 ~ /-.+/) print "true"; else print "false" }' Cargo.toml)
-          echo "CARGO_PKG_VERSION=${CARGO_PKG_VERSION}"
-          echo "CARGO_PKG_PRERELEASE=${CARGO_PKG_PRERELEASE}"
+          echo "CARGO_PKG_VERSION=${CARGO_PKG_VERSION}" >> $GITHUB_OUTPUT
+          echo "CARGO_PKG_PRERELEASE=${CARGO_PKG_PRERELEASE}" >> $GITHUB_OUTPUT
       - name: Create Tag and Release
         uses: actions/create-release@latest
         env:
