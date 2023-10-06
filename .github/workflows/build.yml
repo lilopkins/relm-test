@@ -12,6 +12,7 @@ jobs:
   create-release:
     name: Create Release
     runs-on: ubuntu-latest
+    permissions: write-all
 
     outputs:
       CARGO_PKG_VERSION: ${{ steps.version.outputs.CARGO_PKG_VERSION }}
