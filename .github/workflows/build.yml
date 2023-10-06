@@ -2,8 +2,8 @@ name: Build and Publish
 
 on:
   push:
-    tags:
-      - "*"
+    branches:
+      - main
 
 env:
   CARGO_NAME: "relm-test"
@@ -55,11 +55,19 @@ jobs:
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
+      - name: Determine Cargo version
+        run: |
+          export CARGO_PKG_VERSION=$(awk -F '"' '/version =/ {print $2}' Cargo.toml)
+          export CARGO_PKG_PRERELEASE=$(awk -F '"' '/version =/ { if ($2 ~ /-.+/) print "true"; else print "false" }' Cargo.toml)
+          echo "CARGO_PKG_VERSION=${CARGO_PKG_VERSION}"
+          echo "CARGO_PKG_PRERELEASE=${CARGO_PKG_PRERELEASE}"
+
       - name: Publish release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: target/release/${{ env.CARGO_NAME }}-linux-x86_64
+          tag_name: ${{ env.CARGO_PKG_VERSION }}
+          prerelease: ${{ env.CARGO_PKG_PRERELEASE }}
 
   build-windows:
     name: Build and Publish (Windows)
@@ -124,6 +132,7 @@ jobs:
         run: tree C:\gtk-build\gtk\x64\
 
       - name: Build
+        shell: pwsh
         run: |
           $env:PATH="C:\gtk-build\gtk\x64\release\bin;" + $env:PATH
           $env:LIB="C:\gtk-build\gtk\x64\release\lib;" + $env:LIB
@@ -153,11 +162,21 @@ jobs:
           path: bundle
           filename: ${{ env.CARGO_NAME }}-windows-x86_64.zip
 
+      - name: Determine Cargo version
+        shell: bash
+        run: |
+          export CARGO_PKG_VERSION=$(awk -F '"' '/version =/ {print $2}' Cargo.toml)
+          export CARGO_PKG_PRERELEASE=$(awk -F '"' '/version =/ { if ($2 ~ /-.+/) print "true"; else print "false" }' Cargo.toml)
+          echo "CARGO_PKG_VERSION=${CARGO_PKG_VERSION}"
+          echo "CARGO_PKG_PRERELEASE=${CARGO_PKG_PRERELEASE}"
+
       - name: Publish release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: ${{ env.CARGO_NAME }}-windows-x86_64.zip
+          tag_name: ${{ env.CARGO_PKG_VERSION }}
+          prerelease: ${{ env.CARGO_PKG_PRERELEASE }}
+
 
   build-mac:
     name: Build and Publish (Mac)
@@ -207,8 +226,17 @@ jobs:
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
+      - name: Determine Cargo version
+        run: |
+          export CARGO_PKG_VERSION=$(awk -F '"' '/version =/ {print $2}' Cargo.toml)
+          export CARGO_PKG_PRERELEASE=$(awk -F '"' '/version =/ { if ($2 ~ /-.+/) print "true"; else print "false" }' Cargo.toml)
+          echo "CARGO_PKG_VERSION=${CARGO_PKG_VERSION}"
+          echo "CARGO_PKG_PRERELEASE=${CARGO_PKG_PRERELEASE}"
+
       - name: Publish release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: target/release/${{ env.CARGO_NAME }}-macos-x86_64
+          tag_name: ${{ env.CARGO_PKG_VERSION }}
+          prerelease: ${{ env.CARGO_PKG_PRERELEASE }}
+
