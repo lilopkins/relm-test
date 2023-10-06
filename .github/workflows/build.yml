@@ -12,6 +12,8 @@ jobs:
   build-linux:
     name: Build and Publish (Linux)
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/gtk-rs/gtk4-rs/gtk4:latest
     permissions: write-all
 
     steps:
@@ -35,9 +37,6 @@ jobs:
           toolchain: stable
           default: true
           override: true
-
-      - name: Install dependencies
-        run: sudo apt -y update && sudo apt -y install libgtk-4-dev
 
       - name: Build
         run: |
