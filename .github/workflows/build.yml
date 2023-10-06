@@ -9,12 +9,35 @@ env:
   CARGO_NAME: "relm-test"
 
 jobs:
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Determine Cargo version
+        run: |
+          export CARGO_PKG_VERSION=$(awk -F '"' '/version =/ {print $2}' Cargo.toml)
+          export CARGO_PKG_PRERELEASE=$(awk -F '"' '/version =/ { if ($2 ~ /-.+/) print "true"; else print "false" }' Cargo.toml)
+          echo "CARGO_PKG_VERSION=${CARGO_PKG_VERSION}"
+          echo "CARGO_PKG_PRERELEASE=${CARGO_PKG_PRERELEASE}"
+      - name: Create Tag and Release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.CARGO_PKG_VERSION }}
+          release_name: v${{ env.CARGO_PKG_VERSION }}
+          prerelease: ${{ env.CARGO_PKG_PRERELEASE }}
+
   build-linux:
     name: Build and Publish (Linux)
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/gtk-rs/gtk4-rs/gtk4:latest
     permissions: write-all
+    needs: create-release
 
     steps:
       - name: Checkout
@@ -73,6 +96,7 @@ jobs:
     name: Build and Publish (Windows)
     runs-on: windows-latest
     permissions: write-all
+    needs: create-release
 
     steps:
       - name: Checkout
@@ -170,6 +194,8 @@ jobs:
           echo "CARGO_PKG_VERSION=${CARGO_PKG_VERSION}"
           echo "CARGO_PKG_PRERELEASE=${CARGO_PKG_PRERELEASE}"
 
+
+
       - name: Publish release
         uses: softprops/action-gh-release@v1
         with:
@@ -182,6 +208,7 @@ jobs:
     name: Build and Publish (Mac)
     runs-on: macos-latest
     permissions: write-all
+    needs: create-release
 
     steps:
       - name: Checkout
