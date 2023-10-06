@@ -49,9 +49,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Adwaita
-        run: sudo apt -y update && sudo apt -y install libadwaita-1-dev
-
       - name: Restore Cargo cache
         uses: actions/cache/restore@v3
         with:
