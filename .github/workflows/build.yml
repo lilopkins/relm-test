@@ -13,10 +13,15 @@ jobs:
     name: Create Release
     runs-on: ubuntu-latest
 
+    outputs:
+      CARGO_PKG_VERSION: ${{ steps.version.outputs.CARGO_PKG_VERSION }}
+      CARGO_PKG_PRERELEASE: ${{ steps.version.outputs.CARGO_PKG_PRERELEASE }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Determine Cargo version
+        id: version
         run: |
           export CARGO_PKG_VERSION=$(awk -F '"' '/version =/ {print $2}' Cargo.toml)
           export CARGO_PKG_PRERELEASE=$(awk -F '"' '/version =/ { if ($2 ~ /-.+/) print "true"; else print "false" }' Cargo.toml)
@@ -27,9 +32,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.CARGO_PKG_VERSION }}
-          release_name: v${{ env.CARGO_PKG_VERSION }}
-          prerelease: ${{ env.CARGO_PKG_PRERELEASE }}
+          tag_name: ${{ steps.version.outputs.CARGO_PKG_VERSION }}
+          release_name: v${{ steps.version.outputs.CARGO_PKG_VERSION }}
+          prerelease: ${{ steps.version.outputs.CARGO_PKG_PRERELEASE }}
 
   build-linux:
     name: Build and Publish (Linux)
@@ -78,19 +83,12 @@ jobs:
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Determine Cargo version
-        run: |
-          export CARGO_PKG_VERSION=$(awk -F '"' '/version =/ {print $2}' Cargo.toml)
-          export CARGO_PKG_PRERELEASE=$(awk -F '"' '/version =/ { if ($2 ~ /-.+/) print "true"; else print "false" }' Cargo.toml)
-          echo "CARGO_PKG_VERSION=${CARGO_PKG_VERSION}"
-          echo "CARGO_PKG_PRERELEASE=${CARGO_PKG_PRERELEASE}"
-
       - name: Publish release
         uses: softprops/action-gh-release@v1
         with:
           files: target/release/${{ env.CARGO_NAME }}-linux-x86_64
-          tag_name: ${{ env.CARGO_PKG_VERSION }}
-          prerelease: ${{ env.CARGO_PKG_PRERELEASE }}
+          tag_name: ${{ needs.create-release.outputs.CARGO_PKG_VERSION }}
+          prerelease: ${{ needs.create-release.outputs.CARGO_PKG_PRERELEASE }}
 
   build-windows:
     name: Build and Publish (Windows)
@@ -186,22 +184,12 @@ jobs:
           path: bundle
           filename: ${{ env.CARGO_NAME }}-windows-x86_64.zip
 
-      - name: Determine Cargo version
-        shell: bash
-        run: |
-          export CARGO_PKG_VERSION=$(awk -F '"' '/version =/ {print $2}' Cargo.toml)
-          export CARGO_PKG_PRERELEASE=$(awk -F '"' '/version =/ { if ($2 ~ /-.+/) print "true"; else print "false" }' Cargo.toml)
-          echo "CARGO_PKG_VERSION=${CARGO_PKG_VERSION}"
-          echo "CARGO_PKG_PRERELEASE=${CARGO_PKG_PRERELEASE}"
-
-
-
       - name: Publish release
         uses: softprops/action-gh-release@v1
         with:
           files: ${{ env.CARGO_NAME }}-windows-x86_64.zip
-          tag_name: ${{ env.CARGO_PKG_VERSION }}
-          prerelease: ${{ env.CARGO_PKG_PRERELEASE }}
+          tag_name: ${{ needs.create-release.outputs.CARGO_PKG_VERSION }}
+          prerelease: ${{ needs.create-release.outputs.CARGO_PKG_PRERELEASE }}
 
 
   build-mac:
@@ -253,17 +241,10 @@ jobs:
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Determine Cargo version
-        run: |
-          export CARGO_PKG_VERSION=$(awk -F '"' '/version =/ {print $2}' Cargo.toml)
-          export CARGO_PKG_PRERELEASE=$(awk -F '"' '/version =/ { if ($2 ~ /-.+/) print "true"; else print "false" }' Cargo.toml)
-          echo "CARGO_PKG_VERSION=${CARGO_PKG_VERSION}"
-          echo "CARGO_PKG_PRERELEASE=${CARGO_PKG_PRERELEASE}"
-
       - name: Publish release
         uses: softprops/action-gh-release@v1
         with:
           files: target/release/${{ env.CARGO_NAME }}-macos-x86_64
-          tag_name: ${{ env.CARGO_PKG_VERSION }}
-          prerelease: ${{ env.CARGO_PKG_PRERELEASE }}
+          tag_name: ${{ needs.create-release.outputs.CARGO_PKG_VERSION }}
+          prerelease: ${{ needs.create-release.outputs.CARGO_PKG_PRERELEASE }}
 
