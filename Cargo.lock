@@ -791,7 +791,7 @@ dependencies = [
 
 [[package]]
 name = "relm-test"
-version = "0.1.0"
+version = "0.4.0-rc.1"
 dependencies = [
  "relm4",
 ]
