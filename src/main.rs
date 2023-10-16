@@ -35,11 +35,15 @@ impl SimpleComponent for AppModel {
                     set_margin_all: 5,
                     set_spacing: 5,
 
-                    gtk::Button::with_label("Increment") {
+                    gtk::Button {
+                        set_label: "Increment",
+
                         connect_clicked => AppInput::Increment,
                     },
 
-                    gtk::Button::with_label("Decrement") {
+                    gtk::Button {
+                        set_label: "Decrement",
+
                         connect_clicked => AppInput::Decrement,
                     },
 
@@ -47,7 +51,11 @@ impl SimpleComponent for AppModel {
                         #[watch]
                         set_text: &format!("Counter: {}", model.counter),
                         set_margin_all: 5,
-                    }
+                    },
+
+                    gtk::Button {
+                        set_icon_name: relm4_icons::icon_name::PAPYRUS,
+                    },
                 },
             },
         },
@@ -78,5 +86,6 @@ impl SimpleComponent for AppModel {
 
 fn main() {
     let app = RelmApp::new("uk.hpkns.relm-test");
+    relm4_icons::initialize_icons();
     app.run::<AppModel>(0);
 }
