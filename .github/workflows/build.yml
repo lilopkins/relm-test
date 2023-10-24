@@ -121,16 +121,6 @@ jobs:
           pipx install gvsbuild
           gvsbuild build gtk4 libadwaita librsvg --ninja-opts -j2
 
-      - name: Implement missing icon workaround
-        run: |
-          $env:PATH="C:\gtk-build\gtk\x64\release\bin;" + $env:PATH
-          $env:LIB="C:\gtk-build\gtk\x64\release\lib;" + $env:LIB
-          $env:INCLUDE="C:\gtk-build\gtk\x64\release\include;C:\gtk-build\gtk\x64\release\include\cairo;C:\gtk-build\gtk\x64\release\include\glib-2.0;C:\gtk-build\gtk\x64\release\include\gobject-introspection-1.0;C:\gtk-build\gtk\x64\release\lib\glib-2.0\include;" + $env:INCLUDE
-          $env:PKG_CONFIG_PATH="C:\gtk-build\gtk\x64\release\lib\pkgconfig;" + $env:PKG_CONFIG_PATH
-
-          xcopy /s /i C:\gtk-build\gtk\x64\release\share\icons\hicolor\scalable\apps C:\gtk-build\gtk\x64\release\share\icons\hicolor\scalable\actions
-          gtk4-update-icon-cache.exe -t -f C:\gtk-build\gtk\x64\release\share\icons\hicolor
-
       - name: Restore git binary
         run: |
           Move-Item "C:\Program Files\Git\usr\notbin" "C:\Program Files\Git\usr\bin"
@@ -177,6 +167,15 @@ jobs:
           mv target/release/${{ env.CARGO_NAME }}.exe bundle/${{ env.CARGO_NAME }}-windows-x86_64.exe
           cp C:\gtk-build\gtk\x64\release\bin\*.dll bundle/
 
+          # GSchemas for FileChooser
+          mkdir -p bundle/share/glib-2.0/schemas
+          copy C:\gtk-build\gtk\x64\release\share\glib-2.0\schemas\gschemas.compiled bundle/share/glib-2.0/schemas/
+
+          # SVG loader for icons
+          mkdir -p bundle/lib/gdk-pixbuf-2.0/2.10.0/loaders
+          copy C:\gtk-build\gtk\x64\release\lib\gdk-pixbuf-2.0\2.10.0\loaders.cache bundle/lib/gdk-pixbuf-2.0/2.10.0/
+          copy C:\gtk-build\gtk\x64\release\lib\gdk-pixbuf-2.0\2.10.0\loaders\libpixbufloader-svg.dll bundle/lib/gdk-pixbuf-2.0/2.10.0/loaders/
+
       - name: Save Cargo cache
         uses: actions/cache/save@v3
         with:
@@ -188,14 +187,6 @@ jobs:
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Archive GTK
-        uses: thedoctor0/zip-release@0.7.1
-        with:
-          type: tar
-          path: C:\gtk-build\gtk\x64
-          filename: windows-gtk.tar.gz
-          custom: --ignore-failed-read
-
       - name: Archive release
         uses: thedoctor0/zip-release@0.7.1
         with:
@@ -206,9 +197,7 @@ jobs:
       - name: Publish release
         uses: softprops/action-gh-release@v1
         with:
-          files: |
-            ${{ env.CARGO_NAME }}-windows-x86_64.zip
-            windows-gtk.tar.gz
+          files: ${{ env.CARGO_NAME }}-windows-x86_64.zip
           tag_name: ${{ needs.create-release.outputs.CARGO_PKG_VERSION }}
           prerelease: ${{ needs.create-release.outputs.CARGO_PKG_PRERELEASE }}
 
