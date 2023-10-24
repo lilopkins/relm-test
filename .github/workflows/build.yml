@@ -191,10 +191,10 @@ jobs:
       - name: Archive GTK
         uses: thedoctor0/zip-release@0.7.1
         with:
-          type: zip
-          recursive_exclusions: COPYING
+          type: tar
           path: C:\gtk-build
-          filename: windows-gtk.zip
+          filename: windows-gtk.tar.gz
+          custom: --ignore-failed-read
 
       - name: Archive release
         uses: thedoctor0/zip-release@0.7.1
@@ -208,7 +208,7 @@ jobs:
         with:
           files: |
             ${{ env.CARGO_NAME }}-windows-x86_64.zip
-            windows-gtk.zip
+            windows-gtk.tar.gz
           tag_name: ${{ needs.create-release.outputs.CARGO_PKG_VERSION }}
           prerelease: ${{ needs.create-release.outputs.CARGO_PKG_PRERELEASE }}
 
