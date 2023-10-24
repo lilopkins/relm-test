@@ -192,7 +192,7 @@ jobs:
         uses: thedoctor0/zip-release@0.7.1
         with:
           type: tar
-          path: C:\gtk-build
+          path: C:\gtk-build\gtk\x64
           filename: windows-gtk.tar.gz
           custom: --ignore-failed-read
 
