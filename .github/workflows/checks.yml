@@ -19,6 +19,8 @@ jobs:
   check-clippy:
     name: Check Clippy Suggestions
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/gtk-rs/gtk4-rs/gtk4:latest
 
     steps:
       - name: Checkout
