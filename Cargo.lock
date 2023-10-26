@@ -865,7 +865,7 @@ dependencies = [
 
 [[package]]
 name = "relm-test"
-version = "0.5.0"
+version = "0.5.7"
 dependencies = [
  "relm4",
  "relm4-icons",

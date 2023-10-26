@@ -24,7 +24,7 @@ jobs:
       - name: Determine Cargo version
         id: version
         run: |
-          export CARGO_PKG_VERSION=$(awk -F '["=]' '/^\[package\]/{p=1} p && /^version[[:space:]]*=/ {gsub(/"/, "", $3); print $3; p=0}' Cargo.toml)
+          export CARGO_PKG_VERSION=$(awk -F '["=]' '/^\[(workspace.)?package\]/{p=1} p && /^version[[:space:]]*=/ {gsub(/"/, "", $3); print $3; p=0}' Cargo.toml)
           export CARGO_PKG_PRERELEASE=$([[ $CARGO_PKG_VERSION =~ -[0-9A-Za-z]+ ]] && echo "true" || echo "false")
           echo "CARGO_PKG_VERSION=${CARGO_PKG_VERSION}" >> $GITHUB_OUTPUT
           echo "CARGO_PKG_PRERELEASE=${CARGO_PKG_PRERELEASE}" >> $GITHUB_OUTPUT
@@ -61,11 +61,7 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install Rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          default: true
-          override: true
+        uses: dtolnay/rust-toolchain@stable
 
       - name: Build
         run: |
@@ -220,12 +216,7 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install Rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          target: x86_64-apple-darwin
-          default: true
-          override: true
+        uses: dtolnay/rust-toolchain@stable
 
       - name: Install dependencies
         run: brew install gtk4 libadwaita
