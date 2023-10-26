@@ -1,5 +1,5 @@
 use gtk::prelude::*;
-use relm4::{gtk, adw, ComponentParts, ComponentSender, RelmApp, RelmWidgetExt, SimpleComponent};
+use relm4::{adw, gtk, ComponentParts, ComponentSender, RelmApp, RelmWidgetExt, SimpleComponent};
 
 #[derive(Debug)]
 enum AppInput {
