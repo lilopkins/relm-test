@@ -26,4 +26,4 @@ jobs:
       - name: Install latest Rust toolchain
         uses: dtolnay/rust-toolchain@stable
       - name: Check clippy
-        run: cargo clippy --check
+        run: cargo clippy
