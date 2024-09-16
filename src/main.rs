@@ -54,7 +54,8 @@ impl SimpleComponent for AppModel {
                     },
 
                     gtk::Button {
-                        set_icon_name: relm4_icons::icon_name::PAPYRUS,
+                        set_tooltip_text: Some("Papyrus Button to test icons"),
+                        set_icon_name: relm4_icons::icon_names::PAPYRUS,
                     },
                 },
             },
@@ -63,7 +64,7 @@ impl SimpleComponent for AppModel {
 
     fn init(
         init: Self::Init,
-        root: &Self::Root,
+        root: Self::Root,
         sender: relm4::ComponentSender<Self>,
     ) -> relm4::ComponentParts<Self> {
         let model = AppModel { counter: init };
@@ -87,5 +88,9 @@ impl SimpleComponent for AppModel {
 fn main() {
     let app = RelmApp::new("uk.hpkns.relm-test");
     relm4_icons::initialize_icons();
+    let display = gtk::gdk::Display::default().unwrap();
+    let theme = gtk::IconTheme::for_display(&display);
+    theme.add_resource_path("/uk/hpkns/relm-test/icons/");
+    theme.add_resource_path("/uk/hpkns/relm-test/icons/scalable/actions/");
     app.run::<AppModel>(0);
 }
