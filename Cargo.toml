@@ -1,14 +1,18 @@
 [package]
 name = "relm-test"
-version = "0.5.7"
+version = "0.5.8"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies.relm4]
-version = "0.6.2"
-features = [ "libadwaita" ]
+version = "0.9.0"
+features = ["libadwaita"]
 
 [dependencies.relm4-icons]
-version = "0.6.0"
-features = [ "papyrus" ]
+version = "0.9.0"
+
+[dev-dependencies]
+log = "0.4.22"
+pretty_env_logger = "0.5.0"
+test-by-a11y = "0.2.0"
