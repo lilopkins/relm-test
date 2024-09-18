@@ -159,10 +159,10 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          $env:PATH="C:\gtk-build\gtk\x64\release\bin;" + $env:PATH
-          $env:LIB="C:\gtk-build\gtk\x64\release\lib;" + $env:LIB
-          $env:INCLUDE="C:\gtk-build\gtk\x64\release\include;C:\gtk-build\gtk\x64\release\include\cairo;C:\gtk-build\gtk\x64\release\include\glib-2.0;C:\gtk-build\gtk\x64\release\include\gobject-introspection-1.0;C:\gtk-build\gtk\x64\release\lib\glib-2.0\include;" + $env:INCLUDE
-          $env:PKG_CONFIG_PATH="C:\gtk-build\gtk\x64\release\lib\pkgconfig;" + $env:PKG_CONFIG_PATH
+          set PATH="C:\gtk-build\gtk\x64\release\bin;$PATH"
+          set LIB="C:\gtk-build\gtk\x64\release\lib;$LIB"
+          set INCLUDE="C:\gtk-build\gtk\x64\release\include;C:\gtk-build\gtk\x64\release\include\cairo;C:\gtk-build\gtk\x64\release\include\glib-2.0;C:\gtk-build\gtk\x64\release\include\gobject-introspection-1.0;C:\gtk-build\gtk\x64\release\lib\glib-2.0\include;$INCLUDE"
+          set PKG_CONFIG_PATH="C:\gtk-build\gtk\x64\release\lib\pkgconfig;$PKG_CONFIG_PATH"
 
           cargo build --release
           mkdir -p bundle
@@ -179,16 +179,16 @@ jobs:
           # GSchemas
           mkdir -p bundle/share/glib-2.0/schemas
           glib-compile-schemas C:\gtk-build\gtk\x64\release\share\glib-2.0\schemas\
-          copy C:\gtk-build\gtk\x64\release\share\glib-2.0\schemas\gschemas.compiled bundle/share/glib-2.0/schemas/
+          cp C:\gtk-build\gtk\x64\release\share\glib-2.0\schemas\gschemas.compiled bundle/share/glib-2.0/schemas/
 
           # Icons
           mkdir -p bundle/share/icons/hicolor
-          copy C:\gtk-build\build\x64\release\gtk4\gtk\icons\ bundle/share/icons/
+          cp -r C:\gtk-build\build\x64\release\gtk4\gtk\icons\ bundle/share/icons/
 
           # Pixbuf loaders for icons
           mkdir -p bundle/lib/gdk-pixbuf-2.0/2.10.0/loaders
-          copy C:\gtk-build\gtk\x64\release\lib\gdk-pixbuf-2.0\2.10.0\loaders.cache bundle/lib/gdk-pixbuf-2.0/2.10.0/
-          copy C:\gtk-build\gtk\x64\release\lib\gdk-pixbuf-2.0\2.10.0\loaders\* bundle/lib/gdk-pixbuf-2.0/2.10.0/loaders/
+          cp C:\gtk-build\gtk\x64\release\lib\gdk-pixbuf-2.0\2.10.0\loaders.cache bundle/lib/gdk-pixbuf-2.0/2.10.0/
+          cp C:\gtk-build\gtk\x64\release\lib\gdk-pixbuf-2.0\2.10.0\loaders\* bundle/lib/gdk-pixbuf-2.0/2.10.0/loaders/
 
       - name: Save Cargo cache
         uses: actions/cache/save@v3
