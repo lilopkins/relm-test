@@ -157,7 +157,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Build
-        shell: pwsh
+        shell: bash
         run: |
           $env:PATH="C:\gtk-build\gtk\x64\release\bin;" + $env:PATH
           $env:LIB="C:\gtk-build\gtk\x64\release\lib;" + $env:LIB
@@ -167,16 +167,23 @@ jobs:
           cargo build --release
           mkdir -p bundle
           mv target/release/${{ env.CARGO_NAME }}.exe bundle/${{ env.CARGO_NAME }}-windows-x86_64.exe
+
+          # Copy DLLs
           cp C:\gtk-build\gtk\x64\release\bin\*.dll bundle/
 
-          # GSchemas for FileChooser
+          # Add GDBus and gspawn
+          cp C:\gtk-build\gtk\x64\release\bin\gdbus.exe bundle/
+          cp C:\gtk-build\gtk\x64\release\bin\gspawn-win64-helper-console.exe bundle/
+          cp C:\gtk-build\gtk\x64\release\bin\gspawn-win64-helper.exe bundle/
+
+          # GSchemas
           mkdir -p bundle/share/glib-2.0/schemas
           glib-compile-schemas C:\gtk-build\gtk\x64\release\share\glib-2.0\schemas\
           copy C:\gtk-build\gtk\x64\release\share\glib-2.0\schemas\gschemas.compiled bundle/share/glib-2.0/schemas/
 
           # Icons
           mkdir -p bundle/share/icons/hicolor
-          copy C:\gtk-build\gtk\x64\share\icons\hicolor\index.theme bundle/share/icons/hicolor/index.theme
+          copy C:\gtk-build\build\x64\release\gtk4\gtk\icons\ bundle/share/icons/
 
           # Pixbuf loaders for icons
           mkdir -p bundle/lib/gdk-pixbuf-2.0/2.10.0/loaders
