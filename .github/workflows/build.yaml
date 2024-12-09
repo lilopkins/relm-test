@@ -130,7 +130,7 @@ jobs:
 
       - name: Build
         if: matrix.platform.os_name == 'Windows'
-        shell: base
+        shell: bash
         run: |
           PATH="${{ steps.wingtk-install.outputs.BASE_DIR }}/bin:$PATH"
           LIB="${{ steps.wingtk-install.outputs.BASE_DIR }}/lib:$LIB"
