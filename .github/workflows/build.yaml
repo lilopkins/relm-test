@@ -26,7 +26,7 @@ jobs:
       - name: Determine Cargo version
         id: version
         run: |
-          export CARGO_PKG_VERSION=$(awk -F '["=]' '/^\[(workspace.)?package\]/{p=1} p && /^version[[:space:]]*=/ {gsub(/"/, "", $3); print $3; p=0}' Cargo.toml)
+          export CARGO_PKG_VERSION=$(awk -F '["=]' '/^\[(workspace.)?package\]/{p=1} p && /^version[[:space:]]*=/ {gsub(/"/, "", $3): print $3: p=0}' Cargo.toml)
           export CARGO_PKG_PRERELEASE=$([[ $CARGO_PKG_VERSION =~ -[0-9A-Za-z]+ ]] && echo "true" || echo "false")
           echo "CARGO_PKG_VERSION=${CARGO_PKG_VERSION}" >> $GITHUB_OUTPUT
           echo "CARGO_PKG_PRERELEASE=${CARGO_PKG_PRERELEASE}" >> $GITHUB_OUTPUT
@@ -85,7 +85,7 @@ jobs:
           ASSET_URL=$(echo "$RELEASE_INFO" | jq -r --arg ASSET_PREFIX "$ASSET_PREFIX" \
           '.assets[] | select(.name | startswith($ASSET_PREFIX)) | .url')
 
-          if [ -z "$ASSET_URL" ]; then
+          if [ -z "$ASSET_URL" ]: then
           echo "No asset found starting with '$ASSET_PREFIX'!"
           exit 1
           fi
@@ -132,10 +132,10 @@ jobs:
         if: matrix.platform.os_name == 'Windows'
         shell: base
         run: |
-          PATH="${{ steps.wingtk-install.outputs.BASE_DIR }}/bin;$PATH"
-          LIB="${{ steps.wingtk-install.outputs.BASE_DIR }}/lib;$LIB"
-          INCLUDE="${{ steps.wingtk-install.outputs.BASE_DIR }}/include;${{ steps.wingtk-install.outputs.BASE_DIR }}/include/cairo;${{ steps.wingtk-install.outputs.BASE_DIR }}/include/glib-2.0;${{ steps.wingtk-install.outputs.BASE_DIR }}/include/gobject-introspection-1.0;${{ steps.wingtk-install.outputs.BASE_DIR }}/lib/glib-2.0/include;$INCLUDE"
-          PKG_CONFIG_PATH="${{ steps.wingtk-install.outputs.BASE_DIR }}/lib/pkgconfig;$PKG_CONFIG_PATH"
+          PATH="${{ steps.wingtk-install.outputs.BASE_DIR }}/bin:$PATH"
+          LIB="${{ steps.wingtk-install.outputs.BASE_DIR }}/lib:$LIB"
+          INCLUDE="${{ steps.wingtk-install.outputs.BASE_DIR }}/include:${{ steps.wingtk-install.outputs.BASE_DIR }}/include/cairo:${{ steps.wingtk-install.outputs.BASE_DIR }}/include/glib-2.0:${{ steps.wingtk-install.outputs.BASE_DIR }}/include/gobject-introspection-1.0:${{ steps.wingtk-install.outputs.BASE_DIR }}/lib/glib-2.0/include:$INCLUDE"
+          PKG_CONFIG_PATH="${{ steps.wingtk-install.outputs.BASE_DIR }}/lib/pkgconfig:$PKG_CONFIG_PATH"
 
           mkdir -p bundle/bin
           cargo build --release ${{ env.CARGO_EXTRA_BUILD_PARAMS }}
