@@ -144,7 +144,7 @@ jobs:
           mv target/release/${{ env.EXECUTABLE_NAME }}.exe bundle/bin/${{ env.EXECUTABLE_NAME }}-console-${{ matrix.platform.file_suffix }}.exe
 
           rm -rf ${{ steps.wingtk-install.outputs.BASE_DIR }}/include
-          cp ${{ steps.wingtk-install.outputs.BASE_DIR }}/* bundle/
+          cp -r ${{ steps.wingtk-install.outputs.BASE_DIR }}/* bundle/
 
       - name: Save Cargo cache
         uses: actions/cache/save@v3
