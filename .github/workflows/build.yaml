@@ -68,6 +68,7 @@ jobs:
       - name: Get latest Win-GTK4 build
         if: matrix.platform.os_name == 'Windows'
         id: wingtk-install
+        shell: bash
         run: |
           REPO_OWNER="wingtk"  # Replace with the owner of the repository
           REPO_NAME="gvsbuild" # Replace with the name of the repository
