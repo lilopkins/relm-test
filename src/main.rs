@@ -1,3 +1,8 @@
+#![cfg_attr(
+    all(not(debug_assertions), not(feature = "windows-keep-console-window")),
+    windows_subsystem = "windows"
+)]
+
 use gtk::prelude::*;
 use relm4::{adw, gtk, ComponentParts, ComponentSender, RelmApp, RelmWidgetExt, SimpleComponent};
 
