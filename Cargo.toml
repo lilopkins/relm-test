@@ -1,9 +1,12 @@
 [package]
 name = "relm-test"
-version = "0.5.13"
+version = "0.5.14"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[features]
+windows-keep-console-window = []
 
 [dependencies.relm4]
 version = "0.9.0"
