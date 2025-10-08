@@ -1,6 +1,6 @@
 [package]
 name = "relm-test"
-version = "0.5.20"
+version = "0.5.21"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -9,13 +9,16 @@ edition = "2021"
 windows-keep-console-window = []
 
 [dependencies.relm4]
-version = "0.9.0"
+version = "0.10.0"
 features = ["libadwaita"]
 
 [dependencies.relm4-icons]
-version = "0.9.0"
+version = "0.10.0"
 
 [dev-dependencies]
 log = "0.4.22"
 pretty_env_logger = "0.5.0"
 test-by-a11y = "0.2.0"
+
+[build-dependencies]
+relm4-icons-build = { git = "https://github.com/lilopkins/relm4-icons.git" } # "0.10.0"
