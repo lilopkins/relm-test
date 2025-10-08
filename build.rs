@@ -11,8 +11,6 @@ fn main() {
         // Directory with custom icons (if any)
         Some("icons"),
         // List of icons to include
-        [
-            "papyrus",
-        ],
+        ["papyrus"],
     );
 }
