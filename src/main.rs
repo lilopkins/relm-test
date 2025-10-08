@@ -6,6 +6,12 @@
 use gtk::prelude::*;
 use relm4::{adw, gtk, ComponentParts, ComponentSender, RelmApp, RelmWidgetExt, SimpleComponent};
 
+mod icon_names {
+    pub use custom::*;
+    pub use shipped::*;
+    include!(concat!(env!("OUT_DIR"), "/icon_names.rs"));
+}
+
 #[derive(Debug)]
 enum AppInput {
     Increment,
@@ -60,7 +66,12 @@ impl SimpleComponent for AppModel {
 
                     gtk::Button {
                         set_tooltip_text: Some("Papyrus Button to test icons"),
-                        set_icon_name: relm4_icons::icon_names::PAPYRUS,
+                        set_icon_name: icon_names::PAPYRUS,
+                    },
+
+                    gtk::Button {
+                        set_tooltip_text: Some("Papyrus Button to test custom icons"),
+                        set_icon_name: icon_names::PAPYRUS_VERTICAL_ADD_SYMBOLIC,
                     },
                 },
             },
@@ -92,10 +103,6 @@ impl SimpleComponent for AppModel {
 
 fn main() {
     let app = RelmApp::new("uk.hpkns.relm-test");
-    relm4_icons::initialize_icons();
-    let display = gtk::gdk::Display::default().unwrap();
-    let theme = gtk::IconTheme::for_display(&display);
-    theme.add_resource_path("/uk/hpkns/relm-test/icons/");
-    theme.add_resource_path("/uk/hpkns/relm-test/icons/scalable/actions/");
+    relm4_icons::initialize_icons(icon_names::GRESOURCE_BYTES, icon_names::RESOURCE_PREFIX);
     app.run::<AppModel>(0);
 }
